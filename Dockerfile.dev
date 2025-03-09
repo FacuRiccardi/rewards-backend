@@ -23,7 +23,8 @@ RUN chmod +x /usr/bin/docker-entrypoint
 
 # Set development environment
 ENV RAILS_ENV="development" \
-    BUNDLE_PATH="/usr/local/bundle"
+    BUNDLE_PATH="/usr/local/bundle" \
+    RAILS_BINDING="0.0.0.0"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -33,5 +34,5 @@ EXPOSE 3000
 # Use the same entrypoint as production
 ENTRYPOINT ["/usr/bin/docker-entrypoint"]
 
-# Override the CMD to use the development server
-CMD ["./bin/rails", "server"]
+# Override the CMD to use the development server with binding to 0.0.0.0
+CMD ["./bin/rails", "server", "-b", "0.0.0.0"]

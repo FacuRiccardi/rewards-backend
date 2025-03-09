@@ -6,11 +6,25 @@ if [ -z "${LD_PRELOAD+x}" ]; then
     export LD_PRELOAD
 fi
 
-# If running the rails server then create or migrate existing database
-if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  echo "Preparing database..."
-  ./bin/rails db:prepare
-fi
+# Function to wait for MySQL to be ready
+wait_for_mysql() {
+    echo "Waiting for MySQL to be ready..."
+    local retries=30
+    local count=0
+    while ! mysql -h db -u root -proot -e "SELECT 1" >/dev/null 2>&1; do
+        echo "Waiting for MySQL connection... ($count/$retries)"
+        sleep 2
+        count=$((count + 1))
+        if [ $count -ge $retries ]; then
+            echo "Failed to connect to MySQL after $retries attempts"
+            exit 1
+        fi
+    done
+    echo "MySQL is ready!"
+}
+
+wait_for_mysql
+./bin/rails db:prepare
 
 echo "Executing command: ${@}"
 exec "${@}"
