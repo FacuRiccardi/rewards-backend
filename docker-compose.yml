@@ -12,10 +12,11 @@ services:
       - mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
-      interval: 5s
-      timeout: 5s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   web:
     build:
@@ -30,7 +31,7 @@ services:
       - RAILS_ENV=development
       - BUNDLE_WITHOUT=""
       - BUNDLE_DEPLOYMENT=""
-      - DATABASE_URL=mysql2://root:root@db/rewards_development
+      - DATABASE_URL=mysql2://root:root@db/rewards_backend_development
     depends_on:
       db:
         condition: service_healthy

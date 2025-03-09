@@ -30,9 +30,8 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 EXPOSE 3000
-
 # Use the same entrypoint as production
-ENTRYPOINT ["docker-entrypoint"]
+ENTRYPOINT ["/usr/bin/docker-entrypoint"]
 
 # Override the CMD to use the development server
-CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+CMD ["./bin/rails", "server"]
